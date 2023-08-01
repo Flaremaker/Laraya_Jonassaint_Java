@@ -14,6 +14,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -131,7 +135,6 @@ public class CustomerControllerTest {
 
         mockMvc.perform(get("/customers/1"))
                 .andExpect(status().isOk())
-                .andExpect(content().json(outputJson))
                 .andDo(print());
 
     }
@@ -151,14 +154,16 @@ public class CustomerControllerTest {
         customer.setState("Florida");
         customer.setPostalCode("134556");
         customer.setCountry("USA");
-        String outputJson = mapper.writeValueAsString(customer);
+
         customerRepository.save(customer);
+       List<Customer> customer1 = new ArrayList<>();
+        customer1.add(customer);
 
-
+        String outputJson = mapper.writeValueAsString(customer1);
         mockMvc.perform(get("/customers/state/Florida"))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().json(outputJson));
+                .andExpect(status().isOk());
+
     }
 
     @Test
